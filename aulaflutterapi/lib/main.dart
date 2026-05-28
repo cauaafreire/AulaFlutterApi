@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-void main() {
+void main(){
   runApp(const MyApp());
 }
 
@@ -13,131 +13,147 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primarySwatch: Colors.blue),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
       home: const DisneyPage(),
+    
     );
   }
 }
 
-class DisneyPage extends StatefulWidget {
+class DisneyPage extends StatefulWidget{
   const DisneyPage({super.key});
 
   @override
   State<DisneyPage> createState() => _DisneyPageState();
 }
 
-class _DisneyPageState extends State<DisneyPage> {
-  List personagens = [];
-  final TextEditingController pesquisaController = TextEditingController();
+  class _DisneyPageState extends State<DisneyPage> {
+    List personagens = [];
 
-  @override
-  void initState() {
-    super.initState();
-    buscarPersonagens();
-  }
+    final TextEditingController pesquisaController = 
+    TextEditingController();
 
-  Future<void> buscarPersonagens([String nome = '']) async {
-    String endpoint = 'https://api.disneyapi.de/character';
-
-    if (nome.isNotEmpty) {
-      endpoint = 'https://api.dinseyapi.dev/character?name=$nome';
+    @override
+    void initState() {
+      super.initState();
+      buscarPersonagens();
     }
 
-    final url = Uri.parse(endpoint);
+    Future<void> buscarPersonagens([
+      String nome = '',
+    ]) async {
+      String endpoint = 
+      'https://api.disneyapi.dev/character';
+      if (nome.isNotEmpty) {
+        endpoint = 
+        'https://api.disneyap.dev/character?name=$nome';
+      }
 
-    final resposta = await http.get(url);
+      final url = Uri.parse(endpoint);
 
-    if (resposta.statusCode == 200) {
-      final dados = jsonDecode(resposta.body);
+      final resposta = await http.get(url);
 
-      setState(() {
-        personagens = dados['data'];
-      });
+      if (resposta.statusCode == 200){
+        final dados = jsonDecode(resposta.body);
+
+        setState(() {
+          personagens = dados['data'];
+        });
+      }
     }
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Disney API'), centerTitle: true),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: TextField(
-              controller: pesquisaController,
-              decoration: InputDecoration(
-                hintText: 'Pesquisa personagem',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    pesquisaController.clear();
-                    buscarPersonagens();
-                  },
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onChanged: (valor) {
-                buscarPersonagens(valor);
-              },
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: personagens.length,
-              itemBuilder: (context, index) {
-                final personagem = personagens[index];
-
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  elevation: 4,
-                  child: ListTile(
-                    leading: ClipRRect(
-                      borderRadius: 
-                          BorderRadius.circular(8),
-                      child: Image.network(
-                        personagem['imageUrl'] ?? '',
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        errorBuilder: 
-                            (
-                              context,
-                              error,
-                              StackTrace,
-                            ) {
-                          return Container(
-                            width: 60,
-                            height: 60,
-                            color: Colors.grey[300],
-                            child: const Icon(
-                              Icons.person,
-                              size:35,
-                            ),
-                          );
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Disney API'),
+          centerTitle: true,
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: TextField(
+                controller: pesquisaController,
+                decoration: InputDecoration(
+                  hintText: 'Pesquisar personagem',
+                  prefixIcon: 
+                      const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          pesquisaController.clear();
+                          buscarPersonagens();
                         },
                       ),
-                    ),
-                    title: Text(
-                      personagem['name']
-                          ?? 'Sem nome',
-                    ),
-                    subtitle: Text(
-                      'Id: ${personagem['_id']} - Filme: ${personagem['films']}',
-                    ),
-                  ),
-                );
-              },
+                      border: OutlineInputBorder(
+                        borderRadius: 
+                        BorderRadius.circular(12),
+                      ),
+                ),
+                onChanged: (valor) {
+                  buscarPersonagens(valor);
+                },
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+            Expanded(
+              child: ListView.builder(
+                itemCount: personagens.length,
+                itemBuilder: (context, index) {
+                  final personagem = 
+                      personagens[index];
+
+                  return Card(
+                    margin:
+                    const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    elevation: 4,
+                    child: ListTile(
+                      leading: ClipRRect(
+                        borderRadius:
+                            BorderRadius.circular(8),
+                            child: Image.network(
+                              personagem['imageUrl'] ?? '',
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                              errorBuilder: 
+                                  (
+                                    context,
+                                    error,
+                                    stackTrace,
+                                  ) {
+                                    return Container(
+                                      width: 60,
+                                      height: 60,
+                                      color: Colors.grey[300],
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 35,
+                                      ),
+                                    );
+                                  },
+                            ),
+                      ),
+                      title: Text(
+                        personagem['name']
+                            ?? 'Sem nome',
+                      ),
+                      subtitle: Text(
+                        'ID: ${personagem['_id']} - Filme:  ${personagem['films']}',
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
-}
+  
